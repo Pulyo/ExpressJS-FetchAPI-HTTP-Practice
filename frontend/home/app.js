@@ -1,6 +1,11 @@
+const handleInput = ({ target }) => {
+  target.setAttribute("value", target.value);
+}
+
 const loadEvent = () => {
   fetchData("http://localhost:3000/api/users/").then((data) => {
     listAll(data);
+    window.addEventListener("input", handleInput);
   });
 };
 window.addEventListener("load", loadEvent);
@@ -43,8 +48,8 @@ function listAll(data) {
       }
     });
     userDiv.append(deleteButton);
-    // editing user (PUt)
-    const editUserBtn = createHTMLElement("button", "Edit user (PUT)");
+    // Editing user (PUT and PATCH)
+    const editUserBtn = createHTMLElement("button", "Edit user");
     editUserBtn.addEventListener("click", () => {
       document.querySelector(`#put${user.id}`).style.display = "block";
     });
@@ -68,8 +73,10 @@ function createModal(nameOfModal, id) {
   const ageInput = createHTMLElement("input");
   ageInput.name = "age";
   form.appendChild(ageInput);
-  const submitButton = createHTMLElement("button", "Submit");
+  const submitButton = createHTMLElement("button", "PUT");
   submitButton.type = "submit";
+  const updateFieldOnlyButton = createHTMLElement("button", "PATCH");
+  updateFieldOnlyButton.type = "submit";
 
   submitButton.addEventListener("click", async (e) => {
     e.preventDefault();
@@ -87,7 +94,29 @@ function createModal(nameOfModal, id) {
     }
   });
 
+  updateFieldOnlyButton.addEventListener('click', async (e) => {
+    e.preventDefault();
+    try {
+      let patchData = { id: id };
+      if (nameInput.value !== "") {
+        patchData.name = nameInput.value;
+      }
+      if (ageInput.value !== "") {
+        patchData.age = ageInput.value;
+      }
+      const respons = await fetch(`http://localhost:3000/api/users/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(patchData),
+      });
+      loadEvent();
+    } catch (error) {
+      console.log(error);
+    }
+  })
+
   form.appendChild(submitButton);
+  form.appendChild(updateFieldOnlyButton);
   form.style.display = "none";
   return form;
 }

@@ -55,9 +55,41 @@ app.post("/api/users", async (req, res) => {
   }
 });
 
-app.patch("/api/users/:id", (req, res) => {
+//app.use(express.urlencoded({ extended: false }));
 
+app.patch("/api/users/:id", async (req, res) => {
+  try {
+    const rawData = await fs.readFile("./data.json", 'utf8');
+    const data = JSON.parse(rawData);
+    const userId = parseInt(req.body.id);
+    const user = data.find(user => user.id === userId);
+    console.log(user);
+    console.log(data);
+    if (user.name || user.age) {
+      let patchUser = {
+        id: user.id,
+        name: req.body.name,
+        age: req.body.age,
+      };
+      if (user) {
+        if (patchUser.name) {
+          user.name = patchUser.name;
+        }
+        if (patchUser.age) {
+          user.age = patchUser.age;
+        }
+      }
+      await fs.writeFile("./data.json", JSON.stringify(data), "utf8");
+      return res.send({ state: "DONE" });
+    } else {
+      return res.status(404).send({ state: 'User not found' });
+    }
+  } catch (error) {
+    console.log(error);
+  }
 });
+
+//app.use(express.urlencoded({ extended: true }));
 
 app.put("/api/users/:id", async (req, res) => {
   try {
