@@ -55,6 +55,10 @@ app.post("/api/users", async (req, res) => {
   }
 });
 
+app.patch("/api/users/:id", (req, res) => {
+
+});
+
 app.put("/api/users/:id", async (req, res) => {
   try {
     const rawData = await fs.readFile("./data.json", "utf8");
@@ -81,7 +85,6 @@ app.delete("/api/users/:id", async (req, res) => {
   res.sendStatus(200);
 });
 
-app.patch("/api/users/:id", (req, res) => {});
 
 app.listen(3000, () => {
   console.log("listen on: http://localhost:3000/edit/users");

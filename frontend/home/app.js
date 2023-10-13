@@ -68,7 +68,7 @@ function createModal(nameOfModal, id) {
   const ageInput = createHTMLElement("input");
   ageInput.name = "age";
   form.appendChild(ageInput);
-  const submitButton = createHTMLElement("input", "Submit");
+  const submitButton = createHTMLElement("button", "Submit");
   submitButton.type = "submit";
 
   submitButton.addEventListener("click", async (e) => {
